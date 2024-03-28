@@ -161,22 +161,20 @@ def multi_class_roc_curve(y_true, y_pred_proba):
     return all_fpr, mean_tpr, mean_auc
 
 
-def plot_multiclass_roc_curve(y_true_1, y_pred_proba_1, y_true_2, y_pred_proba_2):
+def plot_multiclass_roc_curve(y_trues, y_pred_probas, labels):
 
-    all_fpr_1, mean_tpr_1, mean_auc_1 = multi_class_roc_curve(y_true_1, y_pred_proba_1)
-    all_fpr_2, mean_tpr_2, mean_auc_2 = multi_class_roc_curve(y_true_2, y_pred_proba_2)
+    results = [
+        multi_class_roc_curve(y_trues[i], y_pred_probas[i]) for i in range(len(y_trues))
+    ]
 
     plt.figure(figsize=(8, 6))
-    plt.plot(
-        all_fpr_1,
-        mean_tpr_1,
-        label=f"Metric 1 mean ROC curve (area = {mean_auc_1:.2f})",
-    )
-    plt.plot(
-        all_fpr_2,
-        mean_tpr_2,
-        label=f"Metric 2 mean ROC curve (area = {mean_auc_2:.2f})",
-    )
+    for i, result in enumerate(results):
+        plt.plot(
+            result[0],
+            result[1],
+            label=f"{labels[i]} mean ROC curve (area = {result[2]:.2f})",
+        )
+
     plt.plot([0, 1], [0, 1], "k--", label="Random")
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
